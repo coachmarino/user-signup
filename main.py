@@ -79,11 +79,6 @@ email_form = """
 </div>
 """
 
-submit_form = """
-<input name='signup' id='signup' type='submit' value='Signup'/>
-"""
-
-
 def validate_username(username):
     return username_validation.match(user)
 
@@ -103,49 +98,30 @@ class Index(webapp2.RequestHandler):
     def get(self):
 
         # this is the user-signup
-        form_header = """
-            <h1>
-                Signup
-            </h1>
-            """
-        complete_form = """
-        <br>
-        <form action="/welcome" method="post">
-            <table>
-                <tr>
-                    <td><label for="username">Username</label></td>
-                    <td>
-                        <input name="username" type="text" value="">
-                        <span class="error"></span>
-                    </td>
-                </tr>
-                <tr>
-                    <td><label for="password">Password</label></td>
-                    <td>
-                        <input name="password" type="password">
-                        <span class="error"></span>
-                    </td>
-                </tr>
-                <tr>
-                    <td><label for="verify">Verify Password</label></td>
-                    <td>
-                        <input name="verify" type="password">
-                        <span class="error"></span>
-                    </td>
-                </tr>
-                <tr>
-                    <td><label for="email">Email (optional)</label></td>
-                    <td>
-                        <input name="email" type="email" value="">
-                        <span class="error"></span>
-                    </td>
-                </tr>
-            </table>
-            <input type="submit">
-        </form>
-        """
+        content = page_header + "<h1>Sign Up</h1><div class='err_container'> \
+            <form action='/welcome' method='post'>" + username_form \
+            + password_form + v_password_form + email_form + \
+            "<input type='submit'></form></div>" + page_footer
 
-        content = page_header + form_header + complete_form + page_footer
+        #form_header = """
+        #    <h1>
+        #        Signup
+        #    </h1>
+        #    """
+        #form_open_tags = """
+        #<form action="/welcome" method="post">
+        #    <table>
+        #    """
+        #form_content = username_form + password_form + v_password_form + email_form
+
+        #form_close_tags = """
+        #    </table>
+        #    <input type="submit">
+        #</form>
+        #"""
+
+        #content = page_header + form_header + form_open_tags +
+        #    form_content + form_close_tags + page_footer
         self.response.write(content)
 
 
