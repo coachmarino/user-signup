@@ -106,12 +106,12 @@ class Index(webapp2.RequestHandler):
         """
 
         # if we have an error, make a <p> to display it
-        error = self.request.get("error")
+        #error = self.request.get("error")
         #error_element = "<p class='error'>" + error + "</p>" if error else ""
 
         # combine all the pieces to build the content of our response
-        main_content = complete_form + error
-        content = page_header + main_content + page_footer
+        #main_content = complete_form + error
+        content = page_header + complete_form + page_footer
         self.response.write(content)
 
 
