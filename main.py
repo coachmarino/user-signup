@@ -13,18 +13,6 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-#
-
-#import webapp2
-
-#class MainHandler(webapp2.RequestHandler):
-#    def get(self):
-#        self.response.write('Hello world!')
-
-#app = webapp2.WSGIApplication([
-#    ('/', MainHandler)
-#], debug=True)
-
 
 import webapp2
 import cgi
@@ -52,12 +40,62 @@ page_footer = """
 </html>
 """
 
-#def getCurrentWatchlist():
-#    """ Returns the user's current watchlist """
+username_validation = re.compile(r"^[a-zA-Z0-9_-]{3,20}$")
+email_validation = re.compile(r"^[\S]+@[\S]+.[\S]+$")
+password_validation = re.compile(r"^.{3,20}$")
 
-    # for now, we are just pretending
-    #return [ "Star Wars", "Minions", "Freaky Friday", "My Favorite Martian" ]
+username_form = """
+<div class="row">
+<label for='user_name'>User Name:&nbsp;</label>
+<input name='user_name' id='user_name' value=""/>
+<span class="noerr">Not a valid user name</span>
+</div>
+"""
 
+password_form = """
+<br>
+<div class="row">
+<label for='password'>Password:&nbsp;</label>
+<input name='password' id='password' type="password" value=""/>
+<span class="noerr">Not a valid user password</span>
+</div>
+"""
+
+v_password_form = """
+<br>
+<div class="row">
+<label for='verify_pw'>Verify:&nbsp;</label>
+<input name='verify_pw' id='verify_pw' type="password" value=""/>
+<span class="noerr">Passwords don't match.</span>
+</div>
+"""
+
+email_form = """
+<br>
+<div class="row">
+<label for='email'>Email (Optonal):&nbsp;</label>
+<input name='email' id='email' value=""/>
+<span class="noerr">Not a valid user email</span>
+</div>
+"""
+
+submit_form = """
+<input name='signup' id='signup' type='submit' value='Signup'/>
+"""
+
+
+def validate_username(username):
+    return username_validation.match(user)
+
+
+def validate_password(password):
+    return password_validation.match(pw)
+
+
+def validate_email(email):
+    if email:
+        return email_validation.match(email)
+    return True
 
 class Index(webapp2.RequestHandler):
     """ Handles requests coming in to '/' (the root of our site)
@@ -65,10 +103,12 @@ class Index(webapp2.RequestHandler):
     def get(self):
 
         # this is the user-signup
+        form_header = """
+            <h1>
+                Signup
+            </h1>
+            """
         complete_form = """
-        <h1>
-            Signup
-        </h1>
         <br>
         <form action="/welcome" method="post">
             <table>
@@ -105,13 +145,7 @@ class Index(webapp2.RequestHandler):
         </form>
         """
 
-        # if we have an error, make a <p> to display it
-        #error = self.request.get("error")
-        #error_element = "<p class='error'>" + error + "</p>" if error else ""
-
-        # combine all the pieces to build the content of our response
-        #main_content = complete_form + error
-        content = page_header + complete_form + page_footer
+        content = page_header + form_header + complete_form + page_footer
         self.response.write(content)
 
 
@@ -172,35 +206,8 @@ class Welcome(webapp2.RequestHandler):
         self.response.write(content)
 
 
-class CrossOffMovie(webapp2.RequestHandler):
-    """ Handles requests coming in to '/cross-off'
-        e.g. www.flicklist.com/cross-off
-    """
-
-    def post(self):
-        # look inside the request to figure out what the user typed
-        crossed_off_movie = self.request.get("crossed-off-movie")
-
-        if (crossed_off_movie in getCurrentWatchlist()) == False:
-            # the user tried to cross off a movie that isn't in their list,
-            # so we redirect back to the front page and yell at them
-
-            # make a helpful error message
-            error = "'{0}' is not in your Watchlist, so you can't cross it off!".format(crossed_off_movie)
-            error_escaped = cgi.escape(error, quote=True)
-
-            # redirect to homepage, and include error as a query parameter in the URL
-            self.redirect("/?error=" + error_escaped)
-
-        # if we didn't redirect by now, then all is well
-        crossed_off_movie_element = "<strike>" + crossed_off_movie + "</strike>"
-        confirmation = crossed_off_movie_element + " has been crossed off your Watchlist."
-        content = page_header + "<p>" + confirmation + "</p>" + page_footer
-        self.response.write(content)
-
-
 app = webapp2.WSGIApplication([
     ('/', Index),
-    ('/welcome', Welcome),
-    ('/cross-off', CrossOffMovie)
+    ('/welcome', Welcome)
+
 ], debug=True)
